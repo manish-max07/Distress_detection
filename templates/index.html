@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Distress Signal Detection</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        #alertBox {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ff4444;
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            font-size: 24px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Distress Signal Detection System</h1>
+        <h3>Show the 'Help' signal (open palm with thumb across) to trigger alert</h3>
+        <img src="{{ url_for('video_feed') }}" width="800">
+        <div id="alertBox">DISTRESS SIGNAL DETECTED!</div>
+    </div>
+
+    <script>
+        function checkAlert() {
+            fetch('/check_alert')
+                .then(response => response.json())
+                .then(data => {
+                    const alertBox = document.getElementById('alertBox');
+                    if (data.alertActive) {
+                        alertBox.style.display = 'block';
+                    } else {
+                        alertBox.style.display = 'none';
+                    }
+                });
+            setTimeout(checkAlert, 1000);
+        }
+
+        document.getElementById('alertBox').addEventListener('click', () => {
+            fetch('/acknowledge_alert', { method: 'POST' });
+        });
+
+        // Start checking for alerts
+        checkAlert();
+    </script>
+</body>
+</html>
