@@ -1,3 +1,4 @@
+mediapipe
 flask
 opencv-python
 cvzone
