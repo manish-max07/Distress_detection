@@ -9,7 +9,10 @@ import pygame  # For audio alerts
 app = Flask(__name__)
 
 # Initialize pygame for audio
+import os
+os.environ["SDL_AUDIODRIVER"] = "dummy"
 pygame.mixer.init()
+
 alarm_sound = pygame.mixer.Sound("alarm.mp3")  # Add a alarm.wav file to your static folder
 
 # Camera setup
@@ -108,4 +111,6 @@ def acknowledge_alert():
     return jsonify(success=True)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)  # Remove ssl_context if not needed
+    import os
+    port = int(os.environ.get("PORT", 5000))  # Get the correct port
+    app.run(host='0.0.0.0', port=port)
