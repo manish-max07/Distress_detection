@@ -96,6 +96,7 @@ def home():
 
 @app.route('/video_feed')
 def video_feed():
+    # This route will return a streaming response only after the camera is granted access
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/check_alert')

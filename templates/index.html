@@ -24,17 +24,50 @@
             font-size: 24px;
             z-index: 1000;
         }
+        #cameraPermission {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #cameraPermission.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Distress Signal Detection System</h1>
         <h3>Show the 'Help' signal (open palm with thumb across) to trigger alert</h3>
-        <img src="{{ url_for('video_feed') }}" width="800">
+        
+        <button id="cameraPermission">Allow Camera Access</button>
+
+        <img id="videoStream" src="" width="800" style="display:none;">
+        
         <div id="alertBox">DISTRESS SIGNAL DETECTED!</div>
     </div>
 
     <script>
+        function requestCameraAccess() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    document.getElementById('cameraPermission').classList.add('hidden');
+                    document.getElementById('videoStream').src = "{{ url_for('video_feed') }}";
+                    document.getElementById('videoStream').style.display = 'block';
+                })
+                .catch((error) => {
+                    alert('Camera access is required to detect distress signals.');
+                    console.error('Camera access denied:', error);
+                });
+        }
+
+        document.getElementById('cameraPermission').addEventListener('click', requestCameraAccess);
+
         function checkAlert() {
             fetch('/check_alert')
                 .then(response => response.json())
